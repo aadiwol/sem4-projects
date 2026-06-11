@@ -1,16 +1,11 @@
-// ===================================================================================
-//   GEARHEADS MAZE SOLVER - "MAP MASTER" EDITION
-//   Features: Dashed Line Flywheel, Hybrid Encoder/Sensor Turns, Start Box Immunity
-// ===================================================================================
 
-// --- HARDWARE MAPPING ---
-const int pinLW = 12;   // Left Wing
-const int pinRW = 13;   // Right Wing
-const int sensorPins[] = {A7, A6, A3, A2, A1, A0}; // 6 Center Sensors
+const int pinLW = 12;   
+const int pinRW = 13;   
+const int sensorPins[] = {A7, A6, A3, A2, A1, A0}; 
 
 // --- ENCODER PINS ---
-const int leftEncA = 2;  // Interrupt 0
-const int rightEncA = 3; // Interrupt 1
+const int leftEncA = 2;  
+const int rightEncA = 3; 
 const int leftEncB = 4;  
 const int rightEncB = 5; 
 
@@ -20,23 +15,23 @@ const int leftMotorDir = 7;
 const int rightMotorPWM = 9;  
 const int rightMotorDir = 10; 
 
-// --- TUNING (ADJUST THESE ON TRACK) ---
+// 
 float Kp = 16.0; 
 float Kd = 10.0;
 
-int baseSpeed = 90;      // Cruising speed
-int turnSpeed = 130;     // Speed for spinning
-int slowSpeed = 60;      // Junction approach speed
-int threshold = 500;     // Black/White threshold
+int baseSpeed = 90;      
+int turnSpeed = 130;     
+int slowSpeed = 60;      
+int threshold = 500;     
 
-// --- MAP-SPECIFIC TUNING ---
-// Distance to drive forward to center wheels on junction (Ticks)
+
+
 const long INCH_TICKS = 120; 
 
-// 90-Degree Turn (Ticks) - Used for the "Blind" part of the turn
+
 const long TURN_90_TICKS = 320; 
 
-// Gap Timeout (ms) - How long to drive blind over dashed lines
+
 const long GAP_TIMEOUT = 400; 
 
 // --- STATE MACHINE ---
@@ -106,13 +101,8 @@ void loop() {
   }
 }
 
-// ==========================================================
-// 1. LINE FOLLOWER (With Dashed Line Support)
-// ==========================================================
 void runLineFollower() {
   
-  // A. START/FINISH CHECK
-  // Only check for finish if we've been running > 3 seconds
   if (millis() - startTime > 3000) {
     if (sensorValues[2] == 1 && sensorValues[3] == 1 && isCenterSolid()) {
       state = FINISHED;
@@ -120,8 +110,6 @@ void runLineFollower() {
     }
   }
 
-  // B. JUNCTION DETECTION
-  // If we see a wing, we must check it.
   if (sensorValues[2] == 1 || sensorValues[3] == 1) {
     state = JUNCTION_HANLDING;
     resetEncoders();
@@ -186,8 +174,6 @@ void handleJunction() {
   // Since we inched forward, we need to rely on what triggered the event
   // OR check if we can turn left now.
   
-  // NOTE: A robust Left-Hand Rule usually checks availability BEFORE inching.
-  // But for this map, we assume standard grid logic.
   
   // Let's sweep:
   // We can't see the Left Wing anymore because we drove past it.
@@ -261,9 +247,6 @@ void executeUTurn() {
   state = FOLLOW;
 }
 
-// ==========================================================
-// HELPERS
-// ==========================================================
 void readSensors() {
   sensorValues[2] = digitalRead(pinLW);
   sensorValues[3] = digitalRead(pinRW);
